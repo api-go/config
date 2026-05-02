@@ -1,0 +1,139 @@
+package config
+
+import (
+	"bytes"
+	"errors"
+	"os"
+	"path/filepath"
+	"strings"
+	"time"
+
+	"apigo.cc/go/cast"
+	"apigo.cc/go/convert"
+	"apigo.cc/go/file"
+)
+
+type Duration time.Duration
+
+func (d *Duration) UnmarshalJSON(value []byte) error {
+	result, err := time.ParseDuration(string(bytes.Trim(value, "\"")))
+	if err == nil {
+		*d = Duration(result)
+	}
+	return err
+}
+
+func (d *Duration) UnmarshalYAML(value interface{}) error {
+	result, err := time.ParseDuration(cast.String(value))
+	if err == nil {
+		*d = Duration(result)
+	}
+	return err
+}
+
+func (d Duration) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + time.Duration(d).String() + "\""), nil
+}
+
+func (d Duration) MarshalYAML() (interface{}, error) {
+	return time.Duration(d).String(), nil
+}
+
+func (d Duration) TimeDuration() time.Duration {
+	return time.Duration(d)
+}
+
+// LoadConfig loads configuration from a file, then applies env.json/yaml if exists,
+// and finally overrides with environment variables.
+func LoadConfig(name string, conf interface{}) error {
+	var errs []error
+
+	// 1. Load base file
+	filename := resolveConfigFilePath(name)
+	if filename != "" {
+		if err := file.UnmarshalFile(filename, conf); err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	// 2. Load env.json/yaml if present
+	envFile := resolveConfigFilePath("env")
+	if envFile != "" {
+		envConf := map[string]interface{}{}
+		if err := file.UnmarshalFile(envFile, &envConf); err == nil {
+			convert.To(envConf, conf)
+		} else {
+			errs = append(errs, err)
+		}
+	}
+
+	// 3. Apply Environment Variable overrides
+	applyEnvOverrides(conf)
+
+	return errors.Join(errs...)
+}
+
+func resolveConfigPath(name string) string {
+	// If it already has an extension, check directly
+	if strings.HasSuffix(name, ".json") || strings.HasSuffix(name, ".yml") || strings.HasSuffix(name, ".yaml") {
+		if file.Exists(name) {
+			return name
+		}
+		return ""
+	}
+
+	// Otherwise, check for .yml then .json
+	if file.Exists(name + ".yml") {
+		return name + ".yml"
+	}
+	if file.Exists(name + ".json") {
+		return name + ".json"
+	}
+	return ""
+}
+
+func resolveConfigFilePath(name string) string {
+	// Search in: current dir, executable dir, user home dir
+	dirs := []string{"."}
+	if execPath, err := os.Executable(); err == nil {
+		dirs = append(dirs, filepath.Dir(execPath))
+	}
+	if home, err := os.UserHomeDir(); err == nil {
+		dirs = append(dirs, home)
+	}
+
+	for _, d := range dirs {
+		p := filepath.Join(d, name)
+		if f := resolveConfigPath(p); f != "" {
+			return f
+		}
+	}
+	return ""
+}
+
+func applyEnvOverrides(conf interface{}) {
+	envMap := make(map[string]interface{})
+	for _, e := range os.Environ() {
+		pair := strings.SplitN(e, "=", 2)
+		if len(pair) != 2 {
+			continue
+		}
+		
+		// Convert DB_HOST to {"db": {"host": value}}
+		parts := strings.Split(strings.ToLower(pair[0]), "_")
+		curr := envMap
+		for i := 0; i < len(parts)-1; i++ {
+			if _, ok := curr[parts[i]]; !ok {
+				curr[parts[i]] = make(map[string]interface{})
+			}
+			if next, ok := curr[parts[i]].(map[string]interface{}); ok {
+				curr = next
+			} else {
+				break
+			}
+		}
+		curr[parts[len(parts)-1]] = pair[1]
+	}
+
+	convert.To(envMap, conf)
+}
