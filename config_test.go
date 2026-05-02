@@ -38,8 +38,8 @@ func TestConfig_ComplexStruct(t *testing.T) {
 	os.Setenv("LIST_BBB", "{\"name\":\"xxx\"}")
 
 	var conf testConfType
-	if err := LoadConfig("complex", &conf); err != nil {
-		t.Errorf("LoadConfig failed: %v", err)
+	if err := Load("complex", &conf); err != nil {
+		t.Errorf("Load failed: %v", err)
 	}
 
 	if conf.Name != "test-config" {

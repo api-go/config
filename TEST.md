@@ -17,7 +17,7 @@
 goos: darwin
 goarch: amd64
 pkg: apigo.cc/go/config
-BenchmarkLoadConfig-16            9104     123326 ns/op      5136 B/op     104 allocs/op
+BenchmarkLoad-16            9104     123326 ns/op      5136 B/op     104 allocs/op
 BenchmarkApplyEnvOverrides-16   260586       4700 ns/op      2657 B/op      64 allocs/op
 ```
 

@@ -1,7 +1,7 @@
 # 更新日志 (Changelog)
 
 ## [1.0.4] - 2026-05-02
-- **变更**: 重构了 `LoadConfig`，使用 `errors.Join` 改进了错误处理。
+- **变更**: 重构了 `Load`，使用 `errors.Join` 改进了错误处理。
 - **变更**: 将 `findFile` 重命名为 `resolveConfigFilePath` 以提高代码清晰度。
 - **变更**: 更新了测试套件以验证错误返回，并移除了重复的类型定义。
 - **变更**: 新增 `bench_test.go` 用于性能评估。

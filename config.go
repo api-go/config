@@ -43,9 +43,9 @@ func (d Duration) TimeDuration() time.Duration {
 	return time.Duration(d)
 }
 
-// LoadConfig loads configuration from a file, then applies env.json/yaml if exists,
+// Load loads configuration from a file, then applies env.json/yaml if exists,
 // and finally overrides with environment variables.
-func LoadConfig(name string, conf interface{}) error {
+func Load(name string, conf interface{}) error {
 	var errs []error
 
 	// 1. Load base file
@@ -118,7 +118,7 @@ func applyEnvOverrides(conf interface{}) {
 		if len(pair) != 2 {
 			continue
 		}
-		
+
 		// Convert DB_HOST to {"db": {"host": value}}
 		parts := strings.Split(strings.ToLower(pair[0]), "_")
 		curr := envMap
