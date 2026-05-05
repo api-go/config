@@ -1,9 +1,11 @@
-package config
+package config_test
 
 import (
 	"os"
 	"testing"
 	"time"
+
+	"apigo.cc/go/config"
 )
 
 type RegressionConf struct {
@@ -11,7 +13,7 @@ type RegressionConf struct {
 	Sets     []int
 	List     map[string]*TestList
 	List2    []string
-	Duration Duration
+	Duration config.Duration
 	Ext      map[string]interface{}
 	ExtList  []interface{}
 }
@@ -24,7 +26,7 @@ func TestForMap_Regression(t *testing.T) {
 	os.Setenv("TEST_LIST_CCC", "333")
 
 	testConf := map[string]interface{}{}
-	err := Load("test", &testConf)
+	err := config.Load(&testConf, "test")
 	if err != nil {
 		t.Fatalf("Load failed: %v", err)
 	}
@@ -43,11 +45,11 @@ func TestForStruct_Regression(t *testing.T) {
 	}`), 0644)
 	defer os.Remove("test.json")
 
-	os.Setenv("LIST_CCC", "{\"name\":\"333\"}")
-	os.Setenv("LIST_DDD", "{\"name\":\"444\"}")
+	os.Setenv("LIST_CCC", `{"name":"333"}`)
+	os.Setenv("LIST_DDD", `{"name":"444"}`)
 
 	var testConf RegressionConf
-	if err := Load("test", &testConf); err != nil {
+	if err := config.Load(&testConf, "test"); err != nil {
 		t.Errorf("Load failed: %v", err)
 	}
 
@@ -79,7 +81,7 @@ extList: ["a", "222", {val: "111"}]
 	defer os.Remove("test2.yml")
 
 	var testConf RegressionConf
-	if err := Load("test2", &testConf); err != nil {
+	if err := config.Load(&testConf, "test2"); err != nil {
 		t.Errorf("Load failed: %v", err)
 	}
 

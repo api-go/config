@@ -1,9 +1,11 @@
-package config
+package config_test
 
 import (
 	"os"
 	"testing"
 	"time"
+
+	"apigo.cc/go/config"
 )
 
 type TestList struct {
@@ -18,7 +20,7 @@ type testConfType struct {
 	Name     string
 	Sets     []int
 	List     map[string]*TestList
-	Duration Duration
+	Duration config.Duration
 }
 
 func TestConfig_ComplexStruct(t *testing.T) {
@@ -38,7 +40,7 @@ func TestConfig_ComplexStruct(t *testing.T) {
 	os.Setenv("LIST_BBB", "{\"name\":\"xxx\"}")
 
 	var conf testConfType
-	if err := Load("complex", &conf); err != nil {
+	if err := config.Load(&conf, "complex"); err != nil {
 		t.Errorf("Load failed: %v", err)
 	}
 

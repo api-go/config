@@ -16,7 +16,7 @@ func BenchmarkLoad(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = Load("bench", &conf)
+		_ = Load(&conf, "bench")
 	}
 }
 

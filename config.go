@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"apigo.cc/go/cast"
-	"apigo.cc/go/convert"
 	"apigo.cc/go/file"
 )
 
@@ -45,7 +44,7 @@ func (d Duration) TimeDuration() time.Duration {
 
 // Load loads configuration from a file, then applies env.json/yaml if exists,
 // and finally overrides with environment variables.
-func Load(name string, conf interface{}) error {
+func Load(conf interface{}, name string) error {
 	var errs []error
 
 	// 1. Load base file
@@ -61,7 +60,7 @@ func Load(name string, conf interface{}) error {
 	if envFile != "" {
 		envConf := map[string]interface{}{}
 		if err := file.UnmarshalFile(envFile, &envConf); err == nil {
-			convert.To(envConf, conf)
+			cast.Convert(conf, envConf)
 		} else {
 			errs = append(errs, err)
 		}
@@ -71,6 +70,14 @@ func Load(name string, conf interface{}) error {
 	applyEnvOverrides(conf)
 
 	return errors.Join(errs...)
+}
+
+// To is a frictionless version of Load. It returns the configuration object of type T.
+// If loading fails, it returns the zero value of type T.
+func To[T any](name string) T {
+	var conf T
+	_ = Load(&conf, name)
+	return conf
 }
 
 func resolveConfigPath(name string) string {
@@ -135,5 +142,5 @@ func applyEnvOverrides(conf interface{}) {
 		curr[parts[len(parts)-1]] = pair[1]
 	}
 
-	convert.To(envMap, conf)
+	cast.Convert(conf, envMap)
 }
