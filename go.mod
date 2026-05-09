@@ -3,8 +3,8 @@ module apigo.cc/go/config
 go 1.25.0
 
 require (
-	apigo.cc/go/cast v1.2.7
-	apigo.cc/go/file v1.0.6
+	apigo.cc/go/cast v1.2.8
+	apigo.cc/go/file v1.0.7
 )
 
 require (

@@ -89,9 +89,12 @@ func resolveConfigPath(name string) string {
 		return ""
 	}
 
-	// Otherwise, check for .yml then .json
+	// Otherwise, check for .yml, .yaml, then .json
 	if file.Exists(name + ".yml") {
 		return name + ".yml"
+	}
+	if file.Exists(name + ".yaml") {
+		return name + ".yaml"
 	}
 	if file.Exists(name + ".json") {
 		return name + ".json"

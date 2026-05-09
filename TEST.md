@@ -10,6 +10,7 @@
   - `TestForMap_Regression`: 验证基础的基于 Map 的配置加载。
   - `TestForStruct_Regression`: 验证基于结构体的映射及环境变量覆盖。
   - `TestForYml_Regression`: 检查 YAML 配置解析，包括接口切片和映射。
+  - `TestForYaml_Support`: 验证针对无后缀 `.yaml` 文件的默认解析支持。
 
 ## 基准测试结果
 
@@ -17,8 +18,8 @@
 goos: darwin
 goarch: amd64
 pkg: apigo.cc/go/config
-BenchmarkLoad-16            9104     123326 ns/op      5136 B/op     104 allocs/op
-BenchmarkApplyEnvOverrides-16   260586       4700 ns/op      2657 B/op      64 allocs/op
+BenchmarkLoad-16                            6255            164111 ns/op
+BenchmarkApplyEnvOverrides-16             294292              3592 ns/op
 ```
 
 *注：基准测试反映了在 Intel i9-9980HK 上的性能表现。*
