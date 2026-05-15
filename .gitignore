@@ -1,3 +1,7 @@
 .ai/
-
 .geminiignore
+.gemini
+env.json
+env.yml
+env.yaml
+/CODE-FULL.md
