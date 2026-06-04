@@ -60,3 +60,31 @@ func TestConfig_ComplexStruct(t *testing.T) {
 		t.Errorf("Duration failed, got %v", conf.Duration.TimeDuration())
 	}
 }
+
+func TestConfig_EnvYamlWithPrefix(t *testing.T) {
+	os.Clearenv()
+	// Create env.yaml with a prefixed block
+	os.WriteFile("env.yaml", []byte(`
+service:
+  app: "emp"
+  listen: ":3000"
+`), 0644)
+	defer os.Remove("env.yaml")
+
+	type ServiceConfig struct {
+		App    string
+		Listen string
+	}
+
+	var conf ServiceConfig
+	if err := config.Load(&conf, "service"); err != nil {
+		t.Errorf("Load failed: %v", err)
+	}
+
+	if conf.App != "emp" {
+		t.Errorf("App mismatch: expected emp, got %s", conf.App)
+	}
+	if conf.Listen != ":3000" {
+		t.Errorf("Listen mismatch: expected :3000, got %s", conf.Listen)
+	}
+}

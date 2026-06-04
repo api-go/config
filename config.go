@@ -60,7 +60,11 @@ func Load(conf interface{}, name string) error {
 	if envFile != "" {
 		envConf := map[string]interface{}{}
 		if err := file.UnmarshalFile(envFile, &envConf); err == nil {
-			cast.Convert(conf, envConf)
+			if val, ok := envConf[name]; ok {
+				cast.Convert(conf, val)
+			} else {
+				cast.Convert(conf, envConf)
+			}
 		} else {
 			errs = append(errs, err)
 		}
