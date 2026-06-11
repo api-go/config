@@ -7,7 +7,7 @@ require (
 	apigo.cc/go/file v1.5.4
 )
 
-require apigo.cc/go/jsmod v1.5.3
+require apigo.cc/go/jsmod v1.5.2
 
 require (
 	apigo.cc/go/encoding v1.5.3
