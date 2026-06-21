@@ -18,8 +18,11 @@
 goos: darwin
 goarch: amd64
 pkg: apigo.cc/go/config
-BenchmarkLoad-16                            6255            164111 ns/op
-BenchmarkApplyEnvOverrides-16             294292              3592 ns/op
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkLoad-16                 	    6528	    203919 ns/op
+BenchmarkApplyEnvOverrides-16    	  269470	      5103 ns/op
+PASS
+ok  	apigo.cc/go/config	3.097s
 ```
 
 *注：基准测试反映了在 Intel i9-9980HK 上的性能表现。*
