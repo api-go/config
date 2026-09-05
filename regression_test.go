@@ -9,13 +9,14 @@ import (
 )
 
 type RegressionConf struct {
-	Name     string
-	Sets     []int
-	List     map[string]*TestList
-	List2    []string
-	Duration config.Duration
-	Ext      map[string]interface{}
-	ExtList  []interface{}
+	Name        string
+	DisplayName string
+	Sets        []int
+	List        map[string]*TestList
+	List2       []string
+	Duration    config.Duration
+	Ext         map[string]interface{}
+	ExtList     []interface{}
 }
 
 func TestForMap_Regression(t *testing.T) {
@@ -68,7 +69,9 @@ func TestForYml_Regression(t *testing.T) {
 	os.Clearenv()
 	os.WriteFile("test2.yml", []byte(`
 name: test-config
+DISPLAY-NAME: yaml-name
 sets: [1, 2, 3]
+duration: 100s
 list:
   aaa: {name: "222"}
   bbb: {name: "xxx"}
@@ -87,6 +90,9 @@ extList: ["a", "222", {val: "111"}]
 
 	if testConf.Name != "test-config" || len(testConf.List2) != 2 {
 		t.Errorf("YML structure failed: %+v", testConf)
+	}
+	if testConf.DisplayName != "yaml-name" || testConf.Duration.TimeDuration() != 100*time.Second {
+		t.Errorf("YML frictionless mapping failed: %+v", testConf)
 	}
 	if testConf.Ext["bbb"] != "222" {
 		t.Errorf("Any map failed: %v", testConf.Ext["bbb"])

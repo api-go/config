@@ -1,6 +1,6 @@
 # 测试报告: `config` 模块
 
-## v1.5.4 验证
+## v1.5.5 验证
 - 独立模块解析、全量测试与基准测试均通过。
 
 ## 概述
@@ -12,20 +12,20 @@
 - **回归测试**:
   - `TestForMap_Regression`: 验证基础的基于 Map 的配置加载。
   - `TestForStruct_Regression`: 验证基于结构体的映射及环境变量覆盖。
-  - `TestForYml_Regression`: 检查 YAML 配置解析，包括接口切片和映射。
+  - `TestForYml_Regression`: 检查 YAML 配置解析，包括接口切片、映射、`Duration` 以及大小写/分隔符无关字段匹配。
   - `TestForYaml_Support`: 验证针对无后缀 `.yaml` 文件的默认解析支持。
 
 ## 基准测试结果
 
 ```text
 goos: darwin
-goarch: amd64
+goarch: arm64
 pkg: apigo.cc/go/config
-cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
-BenchmarkLoad-16                 	    6528	    203919 ns/op
-BenchmarkApplyEnvOverrides-16    	  269470	      5103 ns/op
+cpu: Apple M3 Max
+BenchmarkLoad-16                 	   16298	     71916 ns/op
+BenchmarkApplyEnvOverrides-16    	  670662	      1773 ns/op
 PASS
-ok  	apigo.cc/go/config	3.097s
+ok  	apigo.cc/go/config	3.307s
 ```
 
-*注：基准测试反映了在 Intel i9-9980HK 上的性能表现。*
+整体测试覆盖率为 72.3%。
