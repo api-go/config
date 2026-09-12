@@ -1,6 +1,6 @@
 # 测试报告: `config` 模块
 
-## v1.5.6 验证
+## v1.5.8 验证
 - 独立模块解析、全量测试与基准测试均通过。
 
 ## 概述
@@ -9,6 +9,7 @@
 ## 测试场景
 - **复杂结构映射**: 验证嵌套结构、映射 (Map)、指针以及 `Duration` 类型。
 - **环境变量覆盖**: 确保配置能被环境变量正确覆盖，包括深层嵌套的映射。
+- **命令行覆盖**: 验证 `--config=value`、`--config value`、多文件顺序覆盖、环境变量最终覆盖以及无效路径错误。
 - **回归测试**:
   - `TestForMap_Regression`: 验证基础的基于 Map 的配置加载。
   - `TestForStruct_Regression`: 验证基于结构体的映射及环境变量覆盖。
@@ -22,10 +23,10 @@ goos: darwin
 goarch: arm64
 pkg: apigo.cc/go/config
 cpu: Apple M3 Max
-BenchmarkLoad-16                 	   16298	     71916 ns/op
-BenchmarkApplyEnvOverrides-16    	  670662	      1773 ns/op
+BenchmarkLoad-16                 	   15655	     88015 ns/op
+BenchmarkApplyEnvOverrides-16    	  635098	      1937 ns/op
 PASS
-ok  	apigo.cc/go/config	3.307s
+ok  	apigo.cc/go/config	3.613s
 ```
 
 整体测试覆盖率为 72.3%。

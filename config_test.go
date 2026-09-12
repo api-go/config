@@ -88,3 +88,66 @@ service:
 		t.Errorf("Listen mismatch: expected :3000, got %s", conf.Listen)
 	}
 }
+
+func TestConfig_CommandLineOverlaysInOrder(t *testing.T) {
+	os.Clearenv()
+	oldArgs := os.Args
+	t.Cleanup(func() { os.Args = oldArgs })
+
+	os.WriteFile("env.yaml", []byte("service:\n  app: base\n  listen: ':3000'\n"), 0644)
+	os.WriteFile("env.1.yaml", []byte("service:\n  app: first\n  listen: ':3001'\n"), 0644)
+	os.WriteFile("env.local.yaml", []byte("service:\n  listen: ':3002'\n"), 0644)
+	t.Cleanup(func() {
+		os.Remove("env.yaml")
+		os.Remove("env.1.yaml")
+		os.Remove("env.local.yaml")
+	})
+	os.Args = []string{"master.1", "start", "--config=env.1.yaml", "--config", "env.local.yaml", "--dev"}
+
+	type ServiceConfig struct {
+		App    string
+		Listen string
+	}
+	var conf ServiceConfig
+	if err := config.Load(&conf, "service"); err != nil {
+		t.Fatalf("Load failed: %v", err)
+	}
+	if conf.App != "first" || conf.Listen != ":3002" {
+		t.Fatalf("ordered overlays not applied: %+v", conf)
+	}
+}
+
+func TestConfig_EnvironmentOverridesCommandLineConfig(t *testing.T) {
+	os.Clearenv()
+	oldArgs := os.Args
+	t.Cleanup(func() { os.Args = oldArgs })
+	os.WriteFile("env.1.yaml", []byte("service:\n  listen: ':3001'\n"), 0644)
+	t.Cleanup(func() { os.Remove("env.1.yaml") })
+	os.Args = []string{"master.1", "--config=env.1.yaml", "--dev"}
+	os.Setenv("LISTEN", ":3002")
+
+	var conf struct{ Listen string }
+	if err := config.Load(&conf, "service"); err != nil {
+		t.Fatalf("Load failed: %v", err)
+	}
+	if conf.Listen != ":3002" {
+		t.Fatalf("environment override = %q, want :3002", conf.Listen)
+	}
+}
+
+func TestConfig_CommandLineConfigErrors(t *testing.T) {
+	os.Clearenv()
+	oldArgs := os.Args
+	t.Cleanup(func() { os.Args = oldArgs })
+
+	for _, args := range [][]string{
+		{"master", "--config"},
+		{"master", "--config="},
+		{"master", "--config=missing.yaml"},
+	} {
+		os.Args = args
+		if err := config.Load(&struct{}{}, "service"); err == nil {
+			t.Fatalf("Load(%v) unexpectedly succeeded", args)
+		}
+	}
+}
