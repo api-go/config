@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"apigo.cc/go/config"
+	"github.com/api-go/config"
 )
 
 type RegressionConf struct {

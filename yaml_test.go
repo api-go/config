@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"apigo.cc/go/config"
+	"github.com/api-go/config"
 )
 
 func TestForYaml_Support(t *testing.T) {

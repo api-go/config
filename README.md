@@ -15,13 +15,13 @@
 ## 📦 安装
 
 ```bash
-go get apigo.cc/go/config
+go get github.com/api-go/config
 ```
 
 ## 💡 快速开始
 
 ```go
-import "apigo.cc/go/config"
+import "github.com/api-go/config"
 
 type MyConfig struct {
     Port int

@@ -21,12 +21,22 @@
 ```text
 goos: darwin
 goarch: arm64
-pkg: apigo.cc/go/config
+pkg: github.com/api-go/config
 cpu: Apple M3 Max
 BenchmarkLoad-16                 	   15655	     88015 ns/op
 BenchmarkApplyEnvOverrides-16    	  635098	      1937 ns/op
 PASS
-ok  	apigo.cc/go/config	3.613s
+ok  	github.com/api-go/config	3.613s
 ```
 
 整体测试覆盖率为 72.3%。
+
+## GitHub migration validation (pending release)
+
+Module paths and internal dependency versions are migrated. Development verification uses GOWORK=off and explicit sibling replacements; remove these replacements before release. See migration validation logs for actual results. Existing unrelated working changes are preserved and require separate review.
+
+API inventory verification: `GOWORK=off go doc` succeeded; output retained in the migration validation directory. Source exports were preserved by the path migration.
+
+## GitHub release verification
+
+GOWORK=off go test -v ./... and go test -bench=. ./... passed using published GitHub dependencies, without local replacements. go mod verify passed.

@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"apigo.cc/go/cast"
-	"apigo.cc/go/file"
+	"github.com/api-go/cast"
+	"github.com/api-go/file"
 )
 
 type Duration time.Duration
